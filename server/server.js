@@ -14,7 +14,7 @@ server.listen(PORT, () => {
 app.use(logger)
 
 app.get('/', (req, res) => {
-    res.sendFile('/client/index.html', {root: `${__dirname}/../client`})
+    res.sendFile('/client/index.html', {root: `${__dirname}/../`})
 })
 
 app.get('/index.js', (req, res) => {
