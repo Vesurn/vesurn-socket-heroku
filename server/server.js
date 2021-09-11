@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
     })
     socket.on('joinRoom', (room) => {
         socket.messageTo = room
-        console.log("joinRoom " + socket.messageTo)
+        socket.broadcast.to(socket.messageTo).emit('joinedMyRoom', socket.userName, socket.messageTo)
     })
 
     socket.on("disconnect", () => {

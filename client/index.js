@@ -18,7 +18,7 @@ usernameButton.addEventListener("click", (e) => {
 
 joinRoom.addEventListener("click", (e) => {
     e.preventDefault()
-    socket.emit('joinRoom', roomInput.value)
+    socket.emit('joinRoom', roomInput.value , () => displayMessage(socket.userName + ' joined room: ' + roomInput.value))
 })
 
 function displayMessage(message) {
