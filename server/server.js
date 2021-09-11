@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("sendMessage", (msg) => {
-        socket.broadcast.to(socket.messageTo).emit("receiveMessage", msg)
+        socket.broadcast.to(socket.messageTo).emit("receiveMessage", socket.userName, msg)
     })
 
 })

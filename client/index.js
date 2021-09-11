@@ -42,4 +42,4 @@ socket.on('userDisconnected', (id) => {
     displayMessage(`User left: ${id}`)
 })
 
-socket.on("receiveMessage", (msg) => displayMessage(msg))
+socket.on("receiveMessage", (name, msg) => displayMessage(`${name}: ${msg}`))
