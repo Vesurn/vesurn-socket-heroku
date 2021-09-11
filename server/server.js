@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/index.js', (req, res) => {
-    res.sendFile('/index.js', {root: '../client'})
+    res.sendFile('/index.js', {root: `${__dirname}/../`})
 })
 
 function logger(req, res, next) {
