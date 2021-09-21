@@ -5,36 +5,68 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+
+    </style>
 </head>
 <body>
     <style>
-        #chatWindow {
-            width: 90%;
-            height: 600px;
-            align-self: center;
-            border: 1px solid black;
-        }
-        #userInfo {
-
-        }
-    </style>
-    <div id="chatWindow">
-        <div style="background-color: rgb(130, 128, 128); text-align: center; font-size: 30px;">Welcome to my chat app</div>
-    </div>
-    <form autocomplete="off" id="userInfo">
-        <label for="username">Username</label>
-        <input type="text" id="username">
-        <button id="usernameButton" type="submit">OK</button><br>
-        <label for="messageInput">Message</label>
-        <input type="text" id="messageInput">
-        <button id="sendMessage" type="submit">Send</button><br>
-        <label for="roomInput">Room</label>
-        <input type="text" id="roomInput">
-        <button id="joinRoom" type="submit">Join</button>
-    </form>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="client/index.js" type="module">
-    </script>
     
+        #login {
+            position: relative;
+            display: block;
+            max-width: 500px;
+            max-height: 500px;
+            border: 1px solid black;
+            margin: 200px auto 200px auto;
+            border-radius: 7px;
+            box-shadow: 5px 5px 10px gray;
+        }
+        
+
+        #form {
+            position: relative;
+            margin: 100px 10% 10px 10%;
+            height: 250px;
+            overflow: hidden;
+            padding: 10px;
+        }
+        #button {
+            border-radius: 20px;
+            box-shadow: 3px 3px 3px gray;
+            background-color: hsl(273, 100%, 70%);
+            width: 150px;
+            height: 40px;
+        }
+        #button:hover {
+            background-color: hsl(273, 100%, 40%);
+        }
+
+        .center {
+            margin: auto;
+            display: block;
+        }
+        .margin-top {
+            margin-top: 100px;
+        }
+
+    </style>
+    <div id="login">
+        <form action="login" id="form">
+            <h1 style="text-align: center; white-space: nowrap;">Socket.io Chat</h1>
+            <label for="username" class="center" style="text-align: center; font-size: 25px">Username</label>
+            <input type="text" name="username" id="username" autocomplete="off" placeholder="Username" class="center">
+            <button type="submit" id="button"class="center" style="margin-top: 70px;">Login</button> 
+        </form>
+    </div>
+    <script>
+        const inputField = document.getElementById('username')
+        const button = document.getElementById('button')
+        inputField.value = localStorage.getItem('username')
+
+        button.addEventListener('click', (e) => {
+            localStorage.setItem('username', inputField.value)
+        })
+    </script>
 </body>
 </html>

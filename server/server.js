@@ -17,6 +17,11 @@ app.get('/', (req, res) => {
     res.sendFile('/client/index.html', {root: `${__dirname}/../`})
 })
 
+app.get('/login', (req, res) => {
+    console.log(req.query)
+    res.json(req.query)
+})
+
 app.get('/client/index.js', (req, res) => {
     res.sendFile('/client/index.js', {root: `${__dirname}/../`})
 })
@@ -28,25 +33,6 @@ function logger(req, res, next) {
 
 
 io.on("connection", (socket) => {
-    socket.on('myName', name => {
-        socket.userName = name
-        socket.join(name)
-        console.log("User joined: " + socket.userName)
-        io.emit("userJoined", socket.userName)
-    })
-    socket.on('joinRoom', (room) => {
-        socket.messageTo = room
-        socket.broadcast.to(socket.messageTo).emit('joinedMyRoom', socket.userName, socket.messageTo)
-    })
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected: " + socket.userName)
-        io.emit("userDisconnected", socket.userName)
-    })
-
-    socket.on("sendMessage", (msg) => {
-        socket.broadcast.to(socket.messageTo).emit("receiveMessage", socket.userName, msg)
-    })
 
 })
 
