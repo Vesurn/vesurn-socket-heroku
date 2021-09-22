@@ -17,14 +17,13 @@ app.get('/', (req, res) => {
     res.sendFile('/client/index.html', {root: `${__dirname}/../`})
 })
 
-app.get('/login', (req, res) => {
-    console.log(req.query)
-    res.json(req.query)
-})
+const loginRoute = require('./routes/login')
+app.use('/login', loginRoute)
 
-app.get('/client/index.js', (req, res) => {
+/* app.get('/client/index.js', (req, res) => {
     res.sendFile('/client/index.js', {root: `${__dirname}/../`})
-})
+}) */
+app.use(express.static("./public"))
 
 function logger(req, res, next) {
     console.log(req.method + ' ' + req.url)
