@@ -8,7 +8,7 @@ const io = new Server(server)
 const PORT = process.env.PORT || 8080
 
 server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`)
+    console.log(`Server active on http://localhost:${PORT}`)
 })
 app.set("view engine", "ejs")
 
