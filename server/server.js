@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 8080
 server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
+app.set("view engine", "ejs")
 
 app.use(function(req, res, next) {
     console.log(req.method + ' ' + req.url)
@@ -26,6 +27,8 @@ app.get('/', (req, res) => {
 const loginRoute = require('./routes/login')
 app.use('/login', loginRoute)
 
+const chatRoute = require('./routes/chat')
+app.use('/chat', chatRoute)
 
 /* Socket.io  */
 function onConnection(socket) {
