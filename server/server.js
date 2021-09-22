@@ -18,7 +18,9 @@ app.use(function(req, res, next) {
 }
 )
 app.use(express.static("./public"))
+app.use(express.json())
 
+/* Root directory */
 app.get('/', (req, res) => {
     res.sendFile('/client/index.html', {root: `${__dirname}/../`})
 })
@@ -36,4 +38,3 @@ function onConnection(socket) {
 }
 
 io.on("connection", onConnection)
-

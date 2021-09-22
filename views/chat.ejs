@@ -7,6 +7,15 @@
     <title>Chat</title>
 </head>
 <body>
-    Hello <%= username%>
+    Hello <%=username%>
+    <script>
+        window.onbeforeunload = (e) => {
+            const request = new XMLHttpRequest();
+            const username = window.location.search.slice(3)
+            request.open("POST", "userLeft")
+            request.setRequestHeader('Content-type', 'application/json');
+            request.send(JSON.stringify({username: username}));
+        }
+    </script>
 </body>
 </html>
