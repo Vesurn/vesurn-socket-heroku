@@ -15,7 +15,7 @@
   \***************************/
 /***/ (() => {
 
-eval("const username = localStorage.getItem('username');\r\nconsole.log(username);\r\nconst socket = io()\n\n//# sourceURL=webpack://socket.io/./client/js/chat.js?");
+eval("const username = localStorage.getItem('username');\r\nconsole.log(username);\r\nconst socket = io()\r\n\r\nclass Navbar extends HTMLElement {\r\n    constructor() {\r\n        super()\r\n        const shadow = this.attachShadow({mode: \"open\"})\r\n        const wrapper = document.createElement('div')\r\n        wrapper.id = \"wrapper\"\r\n        const burgerMenu = wrapper.appendChild(document.createElement('div'))\r\n        burgerMenu.id = 'burgerMenu'\r\n        burgerMenu.innerHTML = \"burgerMenu\"\r\n        const style = document.createElement('style')\r\n        style.innerHTML = `\r\n        #wrapper {\r\n            position: fixed;\r\n            display: flex;\r\n            top: 0;\r\n            width: 100%;\r\n            height: 3rem;\r\n            border: 1px solid black;\r\n            flex-wrap: nowrap;\r\n            align-items: center;\r\n            justify-content: space-between;\r\n            align-content: center;\r\n        }\r\n        div {\r\n            border: 1px solid black;\r\n        }\r\n        `\r\n        shadow.append(style, wrapper)\r\n    }\r\n}\r\ncustomElements.define(\"navigation-bar\", Navbar)\n\n//# sourceURL=webpack://socket.io/./client/js/chat.js?");
 
 /***/ })
 
