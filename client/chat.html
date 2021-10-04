@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <style>
+        body {
+            margin: 3rem 0 0 0;
+            height: calc(100vh - 3rem);
+            min-height: 500px;
+            overflow: auto;
+        }
+        #navbar {
+            position: fixed;
+            display: flex;
+            top: 0;
+            width: 100%;
+            height: 3rem;
+            border: 1px solid black;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+            align-content: center;
+        }
+        div {
+            border: 1px solid black;
+        }
+        @media screen and (max-width: 600px) {
+          
+        }
+    </style>
+    <div id='navbar'>
+        <div class='burger-menu'>Burger menu</div>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.bundle.js"></script>
+</body>
+</html>

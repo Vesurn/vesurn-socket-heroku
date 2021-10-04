@@ -3,7 +3,8 @@ const router = express.Router()
 
 //Start path is /chat
 router.get("/", (req, res) => {
-    res.render("chat", {username: req.query.u})
+    console.log(__dirname)
+    res.sendFile("/client/chat.html", {root: `${__dirname}/../../`})
 })
 
 module.exports = router
