@@ -8,7 +8,7 @@
     "packDev": "webpack --mode development",
     "prod": "webpack --mode production",
     "start": "node server/server.js",
-    "watch": "webpack --watch --mode development"
+    "watch": "webpack --watch"
   },
   "keywords": [],
   "author": "",
