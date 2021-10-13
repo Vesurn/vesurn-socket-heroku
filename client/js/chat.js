@@ -103,31 +103,45 @@ class burgerMenu extends HTMLElement {
             }
            
         `
-       
-        button.addEventListener('click', (e) => {
-            this.clickedState = !this.clickedState
+        this.open = () => {
+            this.clickedState = true
             this.dispatchEvent(new CustomEvent('clickStateChange', {
                 bubbles: true,
                 cancelable: true,
                 composed: true,
                 detail: this.clickedState
             }))
-            if (this.clickedState) {
-                lines.forEach(line =>  {
-                    line.style.animation = ""
-                    line.offsetWidth   //cause a DOM reflow
-                })
-                lines[0].style.animation = "top 0.25s forwards"
-                lines[1].style.animation = "middle 0.25s forwards"
-                lines[2].style.animation = "bottom 0.25s forwards"
+            lines.forEach(line =>  {
+                line.style.animation = ""
+                line.offsetWidth   //cause a DOM reflow
+            })
+            lines[0].style.animation = "top 0.25s forwards"
+            lines[1].style.animation = "middle 0.25s forwards"
+            lines[2].style.animation = "bottom 0.25s forwards"
+        }
+
+        this.close = () => {
+            this.clickedState = false
+            this.dispatchEvent(new CustomEvent('clickStateChange', {
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+                detail: this.clickedState
+            }))
+            lines.forEach(line =>  {
+                line.style.animation = ""
+                line.offsetWidth
+            })
+            lines[0].style.animation = "top 0.25s reverse"
+            lines[1].style.animation = "middle 0.25s reverse"
+            lines[2].style.animation = "bottom 0.25s reverse"
+        }
+
+        button.addEventListener('click', (e) => {
+            if (!this.clickedState) {
+                this.open()
             } else {
-                lines.forEach(line =>  {
-                    line.style.animation = ""
-                    line.offsetWidth
-                })
-                lines[0].style.animation = "top 0.25s reverse"
-                lines[1].style.animation = "middle 0.25s reverse"
-                lines[2].style.animation = "bottom 0.25s reverse"
+                this.close()
             }
         })
     }
@@ -144,7 +158,7 @@ class MenuPanel extends HTMLElement {
         const style = shadow.appendChild(document.createElement('style'))
 
         wrapper.id = 'wrapper'
-        wrapper.style.display = "none"
+        wrapper.style.display = "none" // Hide the panel until the user clicks the parent burger-menu
         style.innerHTML = `
             #wrapper {
                 position: fixed;
@@ -199,12 +213,52 @@ class MenuPanel extends HTMLElement {
                 wrapper.style.animation = 'fadeIn 0.2s reverse forwards'
                 panel.style.animation = "slideIn 0.2s reverse forwards"
                 setTimeout(() => wrapper.style.display = 'none', 200)
-
+            }
+        })
+        /* The panel closes if the user clicks outside the panel*/
+        wrapper.addEventListener('click', (e) => {
+            if (e.path[0] === wrapper) {
+                hamburgerMenu.close()
             }
         })
     }
 }
+class PanelButton extends HTMLElement {
+    constructor() {
+        super()
+        const shadow = this.attachShadow({mode: "open"})
+        const style = shadow.appendChild(document.createElement('style'))
+        const wrapper = shadow.appendChild(document.createElement('div'))
+        const HamburgerMenu = this.parentElement.parentElement
+        const textContent = wrapper.appendChild(document.createElement('div'))
+        const messageDiv = wrapper.appendChild(document.createElement('div'))
+        wrapper.id = 'wrapper'
+        this.setAttribute("lastmessage", "none")
+        this.setAttribute("unseenmessage", false)
 
+        style.innerHTML = `
+            #wrapper {
+                position: relative;
+                width: 100%;
+                height: 2.5rem;
+                border: 1px solid black;
+            }
+        `
+        textContent.textContent = this.textContent
+        messageDiv.textContent = this.getAttribute('lastmessage')
+        this.addEventListener('click', (e) => {
+            HamburgerMenu.close()
+            this.setAttribute("unseenmessage", false)
+        })
+    }
+    static get observedAttributes() {
+        return ['lastmessage', 'unseenmessage']
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        console.log(`${name}: ${newValue} from ${oldValue}`)
+    }
+}
+customElements.define("panel-button", PanelButton)
 customElements.define("menu-panel", MenuPanel)
 customElements.define("burger-menu", burgerMenu)
 customElements.define("navigation-bar", Navbar)
