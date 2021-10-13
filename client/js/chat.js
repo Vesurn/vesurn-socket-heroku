@@ -204,9 +204,6 @@ class MenuPanel extends HTMLElement {
                 height: 100%;
                 border: 1px solid black;
                 opacity: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-around;
                 overflow: auto;
             }
         `
@@ -258,19 +255,24 @@ class PanelButton extends HTMLElement {
         style.innerHTML = `
             #wrapper {
                 position: relative;
-                width: 100%;
+                width: calc(100% - 10px);
                 height: 2.5rem;
+                margin: 0 5px;
             }
             button {
                 width: 100%;
                 height: 100%;
                 font-weight: bold;
                 text-align: left;
-                border: 1px solid black;
+                border: none;
                 background-color: white;
+                border-radius: 5px;
             }
             button > div {
                 font-weight: normal;
+            }
+            button:hover {
+                background-color: lightgrey;
             }
 
         `
@@ -300,9 +302,11 @@ class PanelButton extends HTMLElement {
         switch (name) {
             case "seen": {
                 if (newValue === "true") {
-                    button.style['border-right'] = "1px solid black"
+                    button.style['border-right'] = "none"
+                    button.style['background-color'] = "white"
                 } else if (newValue === "false") {
                     button.style['border-right'] = "6px solid blue"
+                    button.style['background-color'] = "lightblue"
                 }
             }
         }
