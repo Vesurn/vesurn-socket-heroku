@@ -2,6 +2,18 @@ const username = localStorage.getItem('username');
 console.log(username);
 //const socket = io()
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/js/sw.js').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}
+
 class Navbar extends HTMLElement {
     constructor() {
         super()
@@ -30,6 +42,7 @@ class Navbar extends HTMLElement {
             align-items: center;
             justify-content: space-between;
             align-content: center;
+            background-color: white;
         }
         `
         
@@ -43,6 +56,7 @@ class burgerMenu extends HTMLElement {
         const shadow = this.attachShadow({mode: "open"})
         const style = shadow.appendChild(document.createElement('style'))
         const button = shadow.appendChild(document.createElement('button'))
+        button.ariaLabel = "Menu"
         /* This slot displays the menu that pops up
          * when the user clicks the hamburger menu button.
          * The menu-panel class is used for this functionality. 
@@ -109,7 +123,7 @@ class burgerMenu extends HTMLElement {
                 bubbles: true,
                 cancelable: true,
                 composed: true,
-                detail: this.clickedState
+                detail: {clickedState: this.clickedState}
             }))
             lines.forEach(line =>  {
                 line.style.animation = ""
@@ -119,14 +133,14 @@ class burgerMenu extends HTMLElement {
             lines[1].style.animation = "middle 0.25s forwards"
             lines[2].style.animation = "bottom 0.25s forwards"
         }
-
+        
         this.close = () => {
             this.clickedState = false
             this.dispatchEvent(new CustomEvent('clickStateChange', {
                 bubbles: true,
                 cancelable: true,
                 composed: true,
-                detail: this.clickedState
+                detail: {clickedState: this.clickedState}
             }))
             lines.forEach(line =>  {
                 line.style.animation = ""
@@ -160,13 +174,13 @@ class MenuPanel extends HTMLElement {
         wrapper.id = 'wrapper'
         wrapper.style.display = "none" // Hide the panel until the user clicks the parent burger-menu
         style.innerHTML = `
-            #wrapper {
+            #wrapper {  /* Gray seethrough background */
                 position: fixed;
                 top: 3rem;
                 left: 0;
                 width: 100%;
-                height: 100%;
-                background-color: hsla(0, 0%, 10%, 50%)
+                height: calc(100vh - 3rem);
+                background-color: hsla(0, 0%, 10%, 50%);
             }
             @keyframes fadeIn {
                 from {
@@ -184,12 +198,16 @@ class MenuPanel extends HTMLElement {
                     transform: translateX(0%);
                 }
             }
-            #wrapper > div {
+            #wrapper > div {    /*Left panel */
                 background-color: white;
                 width: 30%;
                 height: 100%;
                 border: 1px solid black;
                 opacity: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                overflow: auto;
             }
         `
         
@@ -203,7 +221,7 @@ class MenuPanel extends HTMLElement {
                 wrapper.offsetWidth
                 panel.offsetWidth
             }
-            if (e.detail) {
+            if (e.detail.clickedState) {
                 updateAnimation()
                 wrapper.style.display = 'block'
                 wrapper.style.animation = 'fadeIn 0.2s forwards'
@@ -212,7 +230,11 @@ class MenuPanel extends HTMLElement {
                 updateAnimation()
                 wrapper.style.animation = 'fadeIn 0.2s reverse forwards'
                 panel.style.animation = "slideIn 0.2s reverse forwards"
-                setTimeout(() => wrapper.style.display = 'none', 200)
+                setTimeout(() => {
+                    if (!hamburgerMenu.clickedState) {
+                        wrapper.style.display = 'none'
+                    }
+                }, 200)
             }
         })
         /* The panel closes if the user clicks outside the panel*/
@@ -229,33 +251,61 @@ class PanelButton extends HTMLElement {
         const shadow = this.attachShadow({mode: "open"})
         const style = shadow.appendChild(document.createElement('style'))
         const wrapper = shadow.appendChild(document.createElement('div'))
+        const button = wrapper.appendChild(document.createElement("button"))
         const HamburgerMenu = this.parentElement.parentElement
-        const textContent = wrapper.appendChild(document.createElement('div'))
-        const messageDiv = wrapper.appendChild(document.createElement('div'))
         wrapper.id = 'wrapper'
-        this.setAttribute("lastmessage", "none")
-        this.setAttribute("unseenmessage", false)
 
         style.innerHTML = `
             #wrapper {
                 position: relative;
                 width: 100%;
                 height: 2.5rem;
-                border: 1px solid black;
             }
+            button {
+                width: 100%;
+                height: 100%;
+                font-weight: bold;
+                text-align: left;
+                border: 1px solid black;
+                background-color: white;
+            }
+            button > div {
+                font-weight: normal;
+            }
+
         `
-        textContent.textContent = this.textContent
-        messageDiv.textContent = this.getAttribute('lastmessage')
+        const header = this.getAttribute("header")
+        const text = this.getAttribute("text")
+        this.setAttribute("seen", true)
+        const seen = this.getAttribute("seen")
+        if (header && text) {
+            button.textContent = header
+            button.appendChild(document.createElement("div")).textContent = text
+        } else {
+            throw new Error("panel-button missing header and text attributes")
+        }
         this.addEventListener('click', (e) => {
             HamburgerMenu.close()
-            this.setAttribute("unseenmessage", false)
+            this.setAttribute("seen", false)
         })
     }
+
     static get observedAttributes() {
-        return ['lastmessage', 'unseenmessage']
+        return ['seen']
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`${name}: ${newValue} from ${oldValue}`)
+        const wrapper = this.shadowRoot.querySelector("#wrapper")
+        const button = wrapper.children[0]
+        console.log(newValue)
+        switch (name) {
+            case "seen": {
+                if (newValue === "true") {
+                    button.style['border-right'] = "1px solid black"
+                } else if (newValue === "false") {
+                    button.style['border-right'] = "6px solid blue"
+                }
+            }
+        }
     }
 }
 customElements.define("panel-button", PanelButton)
