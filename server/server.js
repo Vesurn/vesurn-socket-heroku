@@ -5,7 +5,7 @@ const { Server } = require('socket.io')
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 80
 
 server.listen(PORT, () => {
     console.log(`Server active on http://localhost:${PORT}`)
@@ -23,6 +23,10 @@ app.use(express.json())
 /* Root directory */
 app.get('/', (req, res) => {
     res.sendFile('/client/index.html', {root: `${__dirname}/../`})
+})
+
+app.get("/manifest.json", (req, res) => {
+    res.sendFile("/manifest.json", {root: `${__dirname}/../`})
 })
 
 /* Express routes */

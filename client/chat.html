@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
+    <link rel="manifest" href="./manifest.json">
     <title>Chat</title>
 </head>
 <body>
@@ -11,7 +13,6 @@
         body {
             margin: 3rem 0 0 0;
             height: calc(100vh - 3rem);
-            min-height: 500px;
             overflow: auto;
         }
     </style>
@@ -32,7 +33,11 @@
             </menu-panel>
         </burger-menu>
     </navigation-bar>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis inventore nihil, obcaecati facilis nostrum eos magnam quos ipsam delectus hic quod sit totam aut atque impedit iste, enim quia similique? A ipsum fugiat consequatur, autem quisquam iure neque, esse blanditiis ex quaerat accusantium non tempora voluptas dignissimos! Maxime voluptas ad perferendis sequi distinctio porro, et non necessitatibus est architecto maiores aut repellendus adipisci tenetur sint. Eveniet rerum voluptatibus culpa iure et! Ipsam eligendi repellat eos qui velit in expedita, temporibus modi voluptatibus minus veniam explicabo, corrupti voluptatum quidem a. Dolorum vero nam beatae quaerat consequatur voluptates repellendus, sit nemo fuga!
+    <chat-window>
+        <chat-message sentbyme="false">Hello World! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Temporibus, soluta!</chat-message>
+        <chat-message>Hello World! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, magnam.</chat-message>
+        <chat-message sentbyme="false">Hello World!</chat-message>
+    </chat-window>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.bundle.js"></script>
     <!--Testing, breakpoints-->

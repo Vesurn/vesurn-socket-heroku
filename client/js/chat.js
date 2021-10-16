@@ -243,6 +243,12 @@ class MenuPanel extends HTMLElement {
     }
 }
 class PanelButton extends HTMLElement {
+    /** 
+     * Exposed attribues: 
+     * - seen: boolean
+     * - header: string - Bold header text
+     * - text: string - normal text (used for last message)
+     */
     constructor() {
         super()
         const shadow = this.attachShadow({mode: "open"})
@@ -312,6 +318,83 @@ class PanelButton extends HTMLElement {
         }
     }
 }
+
+class ChatWindow extends HTMLElement {
+    constructor() {
+        super()
+        const shadow = this.attachShadow({mode: "open"})
+        const style = shadow.appendChild(document.createElement('style'))
+        const wrapper = shadow.appendChild(document.createElement('div'))
+        const slot = wrapper.appendChild(document.createElement('slot'))
+        wrapper.id = "wrapper"
+
+        style.innerHTML = `
+            #wrapper {
+                padding: 5px 0;
+                width: 100%;
+                height: calc(100% - 10px);
+            }
+        `
+
+    }
+}
+class ChatMessage extends HTMLElement {
+    /** - Exposed attributes: sentbyme: boolean */
+    constructor() {
+        super()
+        const shadow = this.attachShadow({mode: "open"})
+        const style = shadow.appendChild(document.createElement('style'))
+        const wrapper = shadow.appendChild(document.createElement('div'))
+        const message = wrapper.appendChild(document.createElement('div'))
+        wrapper.id = "wrapper"
+
+        style.innerHTML = `
+            #wrapper {
+                padding: 0 5px;
+                width: calc(100% - 10px);
+                height: fit-content;
+                margin: 5px 0;
+                font-size: 1.3rem;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+            #wrapper > div {
+                padding: 2px 7px;
+                border-radius: 15px;
+                background-color: lightblue;
+            }
+            @media screen and (min-width: 300px) {
+                #wrapper > div {
+                    max-width: 80%;
+                }
+            }
+        `
+        this.setAttribute("sentbyme", "true")
+        message.textContent = this.textContent
+    }
+    static get observedAttributes() {
+        return ['sentbyme']
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {
+            case 'sentbyme': {
+                const wrapper = this.shadowRoot.querySelector("#wrapper")
+                const message = wrapper.children[0]
+                if (newValue === 'true') {
+                    wrapper.style['justify-content'] = "flex-end"
+                    message.style['background-color'] = "lightblue"
+                } else if (newValue === 'false'){
+                    wrapper.style['justify-content'] = "flex-start"
+                    message.style['background-color'] = "lightgray"
+
+                }
+            }
+        }
+    }
+}
+customElements.define("chat-message", ChatMessage)
+customElements.define("chat-window", ChatWindow)
 customElements.define("panel-button", PanelButton)
 customElements.define("menu-panel", MenuPanel)
 customElements.define("burger-menu", burgerMenu)
