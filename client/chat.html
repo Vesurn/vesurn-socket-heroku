@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
+    <meta name="theme-color" content="white">
     <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="/images/VSRN1920x1920.png">
+    <link rel="apple-touch-icon" href="/images/VSRNsquare.png">
     <title>Chat</title>
 </head>
 <body>
@@ -35,7 +37,7 @@
     </navigation-bar>
     <chat-window>
         <chat-message sentbyme="false">Hello World! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Temporibus, soluta!</chat-message>
-        <chat-message>Hello World! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, magnam.</chat-message>
+        <chat-message sentbyme="true">Hello World! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, magnam.</chat-message>
         <chat-message sentbyme="false">Hello World!</chat-message>
     </chat-window>
     <script src="/socket.io/socket.io.js"></script>

@@ -6,7 +6,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 const PORT = process.env.PORT || 80
-
+const ROOT = `${__dirname}/../`
 server.listen(PORT, () => {
     console.log(`Server active on http://localhost:${PORT}`)
 })
@@ -22,13 +22,18 @@ app.use(express.json())
 
 /* Root directory */
 app.get('/', (req, res) => {
-    res.sendFile('/client/index.html', {root: `${__dirname}/../`})
+    res.sendFile('/client/index.html', {root: ROOT})
 })
 
 app.get("/manifest.json", (req, res) => {
-    res.sendFile("/manifest.json", {root: `${__dirname}/../`})
+    res.sendFile("/manifest.json", {root: ROOT})
 })
-
+app.get("/favicon.ico", (req, res) => {
+    res.sendFile("/public/images/VSRN1920x1920.png", {root: ROOT})
+})
+app.get("/sw.js", (req, res) => {
+    res.sendFile("/public/js/sw.js", {root: ROOT})
+})
 /* Express routes */
 const loginRoute = require('./routes/login')
 app.use('/login', loginRoute)

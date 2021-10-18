@@ -4,7 +4,7 @@ console.log(username);
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/js/sw.js').then(function(registration) {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
             // Registration was successful
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
         }, function(err) {
@@ -346,8 +346,10 @@ class ChatMessage extends HTMLElement {
         const style = shadow.appendChild(document.createElement('style'))
         const wrapper = shadow.appendChild(document.createElement('div'))
         const message = wrapper.appendChild(document.createElement('div'))
+        const extraInfo = wrapper.appendChild(document.createElement("div"))
         wrapper.id = "wrapper"
-
+        message.id = "message"
+        extraInfo.id = "extraInfo"
         style.innerHTML = `
             #wrapper {
                 padding: 0 5px;
@@ -358,21 +360,108 @@ class ChatMessage extends HTMLElement {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
+                flex-wrap: wrap;
             }
-            #wrapper > div {
+            #message {
                 padding: 2px 7px;
                 border-radius: 15px;
-                background-color: lightblue;
+            }
+            #extraInfo {
+                display: none;
+                flex-basis: 100%;
+                font-size: 1rem;
+                color: gray;
             }
             @media screen and (min-width: 300px) {
-                #wrapper > div {
+                #message {
                     max-width: 80%;
                 }
             }
         `
-        this.setAttribute("sentbyme", "true")
+        if(!this.getAttribute('sentbyme')) {
+            this.setAttribute('sentbyme', "true")
+        }
+        if (this.getAttribute('sentbyme') === "true") {
+            extraInfo.style['text-align'] = "right"
+        }
+        message.addEventListener('mouseover', () => {
+            function toBool(string) {
+                if (string == "true") return true
+                if (string == "false") return false
+                return string
+             }
+            if (toBool(this.getAttribute("sentbyme"))) {
+                message.style['background-color'] = "hsl(195, 53%, 75%)"
+            } else {
+                message.style['background-color'] = "hsl(0, 0%, 75%)"
+            }
+        })
+        message.addEventListener('mouseout', () => {
+            function toBool(string) {
+               if (string == "true") return true
+               if (string == "false") return false
+               return string
+            }
+            if (toBool(this.getAttribute("sentbyme"))) {
+               message.style['background-color'] = "hsl(195, 53%, 80%)"
+            } else {
+                message.style['background-color'] = "hsl(0, 0%, 80%)"
+            }
+        })
+        function* alternator() {
+            while (true) {
+                yield false
+                yield true
+            }
+        }
+        const Alternator = alternator()
+        message.addEventListener('click', () => {
+            function playAnimation(iterations) {
+                function* opacity(iterations) {
+                    let result = 0
+                    const step = 1 / iterations
+                    if (iterations < 0) {
+                        result = 1
+                        iterations = -iterations
+                    }
+                    while (iterations--) {
+                        result += step
+                        yield result
+                    }
+                }
+                const opacityGen = opacity(iterations)
+                let interval = setInterval(() => {
+                    extraInfo.style.opacity = opacityGen.next().value
+                    if (extraInfo.style.opacity >= 1 || extraInfo.style.opacity <= 0) clearInterval(interval)
+                }, 10)
+            }
+            if (Alternator.next().value) {
+                playAnimation(-20)
+                setTimeout(() => extraInfo.style.display = "none", 200)
+            } else {
+                extraInfo.style.opacity = 0
+                extraInfo.style.display = "block"
+                playAnimation(20)
+            }
+        })
+        if (!this.textContent) this.render()
+        this.render({seen: true, textContent: "Hello world!"})
         message.textContent = this.textContent
     }
+
+    render(options = {textContent: "Empty", date: new Date(), seen: false}) {
+        if (!options.date) options.date = new Date()
+        if (!options.textContent) throw new Error("No textContent provided")
+
+        const wrapper = this.shadowRoot.querySelector("#wrapper")
+        const extraInfo = wrapper.querySelector("#extraInfo")
+        const { date } = options
+        const dateStr = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`
+
+        extraInfo.textContent = dateStr + `${options.seen ? " - Seen" : ""}`
+        this.textContent = options.textContent
+    }
+
     static get observedAttributes() {
         return ['sentbyme']
     }
@@ -383,10 +472,10 @@ class ChatMessage extends HTMLElement {
                 const message = wrapper.children[0]
                 if (newValue === 'true') {
                     wrapper.style['justify-content'] = "flex-end"
-                    message.style['background-color'] = "lightblue"
+                    message.style['background-color'] = "hsl(195, 53%, 79%)"
                 } else if (newValue === 'false'){
                     wrapper.style['justify-content'] = "flex-start"
-                    message.style['background-color'] = "lightgray"
+                    message.style['background-color'] = "hsl(0, 0%, 83%)"
 
                 }
             }
