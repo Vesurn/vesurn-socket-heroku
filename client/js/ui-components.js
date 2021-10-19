@@ -203,7 +203,7 @@ class MenuPanel extends HTMLElement {
                 padding: 5px;
                 box-shadow: inset 0px 3px 5px -3px grey;
             }
-            @media screen and (max-width: 400px) {
+            @media screen and (max-width: 325px) {
                 #wrapper > div {
                     width: 100%;
                 }
