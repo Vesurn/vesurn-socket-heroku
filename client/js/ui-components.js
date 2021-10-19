@@ -282,7 +282,7 @@ class PanelButton extends HTMLElement {
                 height: 100%;
                 text-align: left;
                 border: none;
-                background-color: white;
+                background-color: rgba(255, 255, 255, 0);
                 border-radius: 5px;
             }
             h1 {
@@ -294,7 +294,7 @@ class PanelButton extends HTMLElement {
                 margin: 0;
             }
             button:hover {
-                background-color: lightgrey;
+                background-color: hsla(0, 0%, 60%, 0.3);
             }
 
         `
@@ -317,10 +317,10 @@ class PanelButton extends HTMLElement {
         function onSeenChange() {
             if (newValue === "true") {
                 button.style['border-right'] = "none"
-                button.style['background-color'] = "white"
+                button.style['background-color'] = "rgba(255, 255, 255, 0)"
             } else if (newValue === "false") {
                 button.style['border-right'] = "6px solid blue"
-                button.style['background-color'] = "lightblue"
+                button.style['background-color'] = "rgba(173, 216, 230, 0.5)"
             }
         }
 
@@ -333,12 +333,15 @@ class PanelButton extends HTMLElement {
         switch (name) {
             case "seen": {
                onSeenChange()
+               break
             }
             case "header": {
                 onHeaderChange()
+                break
             }
             case "text": {
                 onTextChange()
+                break
             }
         }
     }
