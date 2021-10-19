@@ -5,7 +5,7 @@ const { Server } = require('socket.io')
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
-const PORT = process.env.PORT || 80
+const PORT = process.env.PORT || 8080
 const ROOT = `${__dirname}/../`
 server.listen(PORT, () => {
     console.log(`Server active on http://localhost:${PORT}`)

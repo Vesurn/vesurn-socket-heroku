@@ -4,6 +4,7 @@ const ASSETS = [
     "/chat",
     "/js/chat.bundle.js",
     "/js/index.bundle.js",
+    "/socket.io/socket.io.js", // Optional while not using webpack for socket.io
     "/manifest.json",
     "/images/VSRN1920x1920.png",
     "/images/maskable_icon.png",
@@ -12,13 +13,16 @@ const ASSETS = [
 const CACHE_NAME = "offline-cache"
 
 self.addEventListener("fetch", event => {
-    console.log("You fetched")
+    console.log("You fetched " + event.request.url)
     event.respondWith(
-        fetch(event.request).catch(err => {
+        fetch(event.request).then(response => {
+            if (response) {
+                return response
+            }
+            return caches.match(event.request).then((response) => response)
+        }, (err) => {
             console.log(err)
-            self.caches.open(CACHE_NAME).then(cache => {
-                caches.match(event.request).then(response => response)
-            })
+            return caches.match(event.request).then((response) => response)
         })
     )
 })
