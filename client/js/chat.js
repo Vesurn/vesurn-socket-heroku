@@ -43,3 +43,10 @@ const messages = new Array(15).fill().map(() => ({
 messages.forEach(message => {
     chatWindow.appendChild(document.createElement("chat-message").render(message))
 })
+const navbar = document.querySelector("navigation-bar")
+const div = document.createElement("div")
+navbar.appendChild(div)
+div.slot = "right"
+setInterval(() => {
+    div.innerHTML = `${window.innerWidth}x${window.innerHeight}`
+}, 100)
