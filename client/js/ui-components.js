@@ -198,9 +198,10 @@ class MenuPanel extends HTMLElement {
                 background-color: white;
                 width: 15rem;
                 height: 100%;
-                border: 1px solid black;
                 opacity: 1;
                 overflow: auto;
+                padding: 5px;
+                box-shadow: inset 0px 3px 5px -3px grey;
             }
             @media screen and (max-width: 400px) {
                 #wrapper > div {
@@ -246,7 +247,8 @@ class MenuPanel extends HTMLElement {
 
 class PanelButton extends HTMLElement {
     /** 
-     * Exposed attribues: 
+     * Static element should be declared in the HTML document
+     * - Exposed attribues: 
      * - seen: boolean
      * - header: string - Bold header text
      * - text: string - normal text (used for last message)
@@ -257,7 +259,15 @@ class PanelButton extends HTMLElement {
         const style = shadow.appendChild(document.createElement('style'))
         const wrapper = shadow.appendChild(document.createElement('div'))
         const button = wrapper.appendChild(document.createElement("button"))
-        const HamburgerMenu = this.parentElement.parentElement
+        const header = button.appendChild(document.createElement("h1"))
+        const text = button.appendChild(document.createElement("p"))
+        let HamburgerMenu
+        if (this.parentElement.parentElement.localName === "burger-menu") {
+            HamburgerMenu = this.parentElement.parentElement
+        } else {
+            throw new Error("panel-button must be a child of menu-panel")
+        }
+        
         wrapper.id = 'wrapper'
 
         style.innerHTML = `
@@ -265,35 +275,31 @@ class PanelButton extends HTMLElement {
                 position: relative;
                 width: calc(100% - 10px);
                 height: 2.5rem;
-                margin: 0 5px;
+                margin: 0;
             }
             button {
                 width: 100%;
                 height: 100%;
-                font-weight: bold;
                 text-align: left;
                 border: none;
                 background-color: white;
                 border-radius: 5px;
             }
-            button > div {
-                font-weight: normal;
+            h1 {
+                font-weight: bold;
+                font-size: 1rem;
+                margin: 0;
+            }
+            p {
+                margin: 0;
             }
             button:hover {
                 background-color: lightgrey;
             }
 
         `
-        const header = this.getAttribute("header")
-        const text = this.getAttribute("text")
-        this.setAttribute("seen", true)
-        const seen = this.getAttribute("seen")
-        if (header && text) {
-            button.textContent = header
-            button.appendChild(document.createElement("div")).textContent = text
-        } else {
-            throw new Error("panel-button missing header and text attributes")
-        }
+
+        
         this.addEventListener('click', (e) => {
             HamburgerMenu.close()
             this.setAttribute("seen", false)
@@ -301,20 +307,38 @@ class PanelButton extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['seen']
+        return ['seen',"header","text"]
     }
     attributeChangedCallback(name, oldValue, newValue) {
         const wrapper = this.shadowRoot.querySelector("#wrapper")
         const button = wrapper.children[0]
+        const header = button.querySelector("h1")
+        const text = button.querySelector("p")
+        function onSeenChange() {
+            if (newValue === "true") {
+                button.style['border-right'] = "none"
+                button.style['background-color'] = "white"
+            } else if (newValue === "false") {
+                button.style['border-right'] = "6px solid blue"
+                button.style['background-color'] = "lightblue"
+            }
+        }
+
+        function onHeaderChange() {
+            header.textContent = newValue
+        }
+        function onTextChange() {
+            text.textContent = newValue
+        }
         switch (name) {
             case "seen": {
-                if (newValue === "true") {
-                    button.style['border-right'] = "none"
-                    button.style['background-color'] = "white"
-                } else if (newValue === "false") {
-                    button.style['border-right'] = "6px solid blue"
-                    button.style['background-color'] = "lightblue"
-                }
+               onSeenChange()
+            }
+            case "header": {
+                onHeaderChange()
+            }
+            case "text": {
+                onTextChange()
             }
         }
     }
