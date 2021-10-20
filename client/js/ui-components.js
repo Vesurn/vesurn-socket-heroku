@@ -392,18 +392,43 @@ class ChatWindow extends HTMLElement {
         //Append custom scrollbar style
         shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
         wrapper.id = "wrapper"
+        wrapper.classList.add("scrollbar-margin-top", "scrollbar-margin-bottom")
         //Wait for content to load then scroll to the bottom
+        style.innerHTML = `
+        #wrapper {
+            padding: calc(5px + 3rem) 0;
+            width: 100%;
+            height: calc(100% - calc(10px + 6rem));
+            overflow: auto;
+        }
+        /* Custom scrollbar track */
+        .scrollbar::after {
+            content:'';
+            position: absolute;
+            z-index: -1;
+            height: calc(100% - calc(3rem + 10px));
+            top: 10px;
+            right: 4px;
+            width: 2px;
+            background: hsl(0, 0%, 75%);
+        }
+        `
         window.addEventListener("load", () => {
             wrapper.scrollTo(0, wrapper.scrollHeight)
-        })
-        style.innerHTML = `
-            #wrapper {
-                padding: 5px 0;
-                width: 100%;
-                height: calc(100% - 10px);
-                overflow: auto;
+            if (hasScrollBar(wrapper)) {
+                wrapper.classList.add("scrollbar")
             }
-        `
+        })
+        function hasScrollBar(element) {
+            return element.scrollHeight > element.clientHeight
+        }
+        window.addEventListener("resize", () => {
+            if (hasScrollBar(wrapper)) {
+                wrapper.classList.add("scrollbar")
+            } else {
+                wrapper.classList.remove("scrollbar")
+            }
+        })
     }
 }
 

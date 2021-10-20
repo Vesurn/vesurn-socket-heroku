@@ -39,9 +39,11 @@ const messages = new Array(15).fill().map(() => ({
     seen: false,
     sentbyme: Gen.next().value
 }))
+
 messages.forEach(message => {
     chatWindow.appendChild(document.createElement("chat-message").render(message))
 })
+
 const navbar = document.querySelector("navigation-bar")
 const div = document.createElement("div")
 navbar.appendChild(div)

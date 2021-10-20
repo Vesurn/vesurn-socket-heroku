@@ -13,8 +13,10 @@
 <body>
     <style>
         body {
-            margin: 3rem 0 0 0;
-            height: calc(100vh - 3rem);
+            /* padding: 3rem 0 0 0; */
+            margin: 0;
+            /* height: calc(100vh - 3rem); */
+            height: 100vh;
             overflow: hidden;
         }
 
@@ -23,45 +25,56 @@
             <style>
                 /* width */
                 ::-webkit-scrollbar {
+                    /* display: block; */
                     width: 10px;
                 }
 
                 /* Track */
                 ::-webkit-scrollbar-track {
-                    background: hsla(0, 0%, 90%, 0.5);
+                    background: transparent;
                 }
 
                 /* Handle */
                 ::-webkit-scrollbar-thumb {
-                    border: 2px solid hsl(0, 0%, 90%);
+                    border: 2px solid rgba(255, 255, 255, 1);
+                    border-top: transparent;
+                    border-bottom: transparent;
                     background: #888;
                     border-radius: 10px;
                 }
 
                 /* Handle on hover */
-                ::shadow::-webkit-scrollbar-thumb:hover {
+                ::-webkit-scrollbar-thumb:hover {
                     background: #555;
+                }
+                .scrollbar-margin-top::-webkit-scrollbar-track-piece:start {
+                    background: transparent;
+                    margin-top: calc(3rem + 5px);
+                }
+                .scrollbar-margin-bottom::-webkit-scrollbar-track-piece:end {
+                    background: transparent;
+                    margin-bottom: 3rem;
                 }
             </style>
         </template>
-    <navigation-bar>
-        <burger-menu slot='left'>
-            <menu-panel>
-                <div style="padding: 0 5px">Rooms</div>
-                <panel-button header="Room1" text="none"></panel-button>
-                <panel-button header="Room2" text="none"></panel-button>
-                <panel-button header="Room3" text="none"></panel-button>
-                <panel-button header="Room4" text="none"></panel-button>
-                <panel-button header="Room5" text="none"></panel-button>
-                <panel-button header="Room6" text="none"></panel-button>
-                <panel-button header="Room7" text="none"></panel-button>
-                <panel-button header="Room8" text="none"></panel-button>
-                <panel-button header="Room9" text="none"></panel-button>
-                <panel-button header="Room10" text="none"></panel-button>
-            </menu-panel>
-        </burger-menu>
-    </navigation-bar>
-    <chat-window>
+        <chat-window class="scrollbar-margin-top scrollbar-margin-bottom">
+        <navigation-bar>
+            <burger-menu slot='left'>
+                <menu-panel>
+                    <div style="padding: 0 5px">Rooms</div>
+                    <panel-button header="Room1" text="none"></panel-button>
+                    <panel-button header="Room2" text="none"></panel-button>
+                    <panel-button header="Room3" text="none"></panel-button>
+                    <panel-button header="Room4" text="none"></panel-button>
+                    <panel-button header="Room5" text="none"></panel-button>
+                    <panel-button header="Room6" text="none"></panel-button>
+                    <panel-button header="Room7" text="none"></panel-button>
+                    <panel-button header="Room8" text="none"></panel-button>
+                    <panel-button header="Room9" text="none"></panel-button>
+                    <panel-button header="Room10" text="none"></panel-button>
+                </menu-panel>
+            </burger-menu>
+        </navigation-bar>
     </chat-window>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.bundle.js"></script>
