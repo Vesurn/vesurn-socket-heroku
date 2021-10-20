@@ -392,7 +392,10 @@ class ChatWindow extends HTMLElement {
         //Append custom scrollbar style
         shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
         wrapper.id = "wrapper"
-
+        //Wait for content to load then scroll to the bottom
+        window.addEventListener("load", () => {
+            wrapper.scrollTo(0, wrapper.scrollHeight)
+        })
         style.innerHTML = `
             #wrapper {
                 padding: 5px 0;
@@ -513,7 +516,7 @@ class ChatMessage extends HTMLElement {
         const message = this.shadowRoot.querySelector("#message")
         const extraInfo = wrapper.querySelector("#extraInfo")
         const { date } = options
-        const dateStr = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`
+        const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`
 
         this.setAttribute("sentbyme", options.sentbyme ? "true" : "false")
         extraInfo.textContent = dateStr + `${options.seen ? " - Seen" : ""}`
