@@ -119,6 +119,8 @@ class BurgerMenu extends HTMLElement {
                 composed: true,
                 detail: {clickedState: this.clickedState}
             }))
+            window.history.replaceState("", null, "./")
+            window.history.pushState("", null, "./")
             lines.forEach(line =>  {
                 line.style.animation = ""
                 line.offsetWidth   //cause a DOM reflow
@@ -137,6 +139,7 @@ class BurgerMenu extends HTMLElement {
                 composed: true,
                 detail: {clickedState: this.clickedState}
             }))
+            window.history.back()
             lines.forEach(line =>  {
                 line.style.animation = ""
                 line.offsetWidth
@@ -154,6 +157,34 @@ class BurgerMenu extends HTMLElement {
                 this.close()
             }
         })
+        /* Close the menu when the back button is clicked */
+        /* The same as this.close() but without the
+           window.history.back() line */
+        const modifiedClose = () => {
+            this.clickedState = false
+            this.dispatchEvent(new CustomEvent('clickStateChange', {
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+                detail: {clickedState: this.clickedState}
+            }))
+            lines.forEach(line =>  {
+                line.style.animation = ""
+                line.offsetWidth
+            })
+            this.parentElement.makeTranslucent(true)
+            lines[0].style.animation = "top 0.25s reverse"
+            lines[1].style.animation = "middle 0.25s reverse"
+            lines[2].style.animation = "bottom 0.25s reverse"
+        }
+        window.addEventListener("popstate", (e) => {
+            if (window.history && window.history.pushState) {
+                if (this.clickedState) {
+                    modifiedClose()
+                    e.stopPropagation()
+                }
+            }
+        },)
     }
 }
 
