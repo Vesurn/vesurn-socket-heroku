@@ -166,7 +166,8 @@ class MenuPanel extends HTMLElement {
         const panel = wrapper.appendChild(document.createElement('div'))
         const slot = panel.appendChild(document.createElement('slot'))
         const style = shadow.appendChild(document.createElement('style'))
-
+        //Append custom scrollbar style
+        shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
         wrapper.id = 'wrapper'
         wrapper.style.display = "none" // Hide the panel until the user clicks the parent burger-menu
         style.innerHTML = `
@@ -205,9 +206,11 @@ class MenuPanel extends HTMLElement {
             }
             @media screen and (max-width: 325px) {
                 #wrapper > div {
-                    width: 100%;
+                    width: calc(100% - 10px);
+                    padding-right: 5px;
                 }
             }
+            
         `
         
         if (hamburgerMenu.localName !== "burger-menu") {
@@ -273,7 +276,7 @@ class PanelButton extends HTMLElement {
         style.innerHTML = `
             #wrapper {
                 position: relative;
-                width: calc(100% - 10px);
+                width: 100%;
                 height: 2.5rem;
                 margin: 0;
             }
@@ -354,6 +357,9 @@ class ChatWindow extends HTMLElement {
         const style = shadow.appendChild(document.createElement('style'))
         const wrapper = shadow.appendChild(document.createElement('div'))
         const slot = wrapper.appendChild(document.createElement('slot'))
+
+        //Append custom scrollbar style
+        shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
         wrapper.id = "wrapper"
 
         style.innerHTML = `
@@ -361,6 +367,7 @@ class ChatWindow extends HTMLElement {
                 padding: 5px 0;
                 width: 100%;
                 height: calc(100% - 10px);
+                overflow: auto;
             }
         `
     }

@@ -15,12 +15,38 @@
         body {
             margin: 3rem 0 0 0;
             height: calc(100vh - 3rem);
-            overflow: auto;
+            overflow: hidden;
         }
+
         </style>
+        <template id="scrollbar-template">
+            <style>
+                /* width */
+                ::-webkit-scrollbar {
+                    width: 10px;
+                }
+
+                /* Track */
+                ::-webkit-scrollbar-track {
+                    background: hsla(0, 0%, 90%, 0.5);
+                }
+
+                /* Handle */
+                ::-webkit-scrollbar-thumb {
+                    border: 2px solid hsl(0, 0%, 90%);
+                    background: #888;
+                    border-radius: 10px;
+                }
+
+                /* Handle on hover */
+                ::shadow::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+            </style>
+        </template>
     <navigation-bar>
         <burger-menu slot='left'>
-            <menu-panel>
+            <menu-panel class="customScroll">
                 <div style="padding: 0 5px">Rooms</div>
                 <panel-button header="Room1" text="none"></panel-button>
                 <panel-button header="Room2" text="none"></panel-button>
@@ -35,7 +61,7 @@
             </menu-panel>
         </burger-menu>
     </navigation-bar>
-    <chat-window>
+    <chat-window class="customScroll">
     </chat-window>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.bundle.js"></script>

@@ -13,8 +13,15 @@ if ('serviceWorker' in navigator) {
         });
     });
 }
-
-
+document.addEventListener("load", () => {
+    if (window.history && window.history.pushState) {
+        window.history.pushState("", null, "./")
+        window.addEventListener('popstate', function() {
+            alert('Back button was pressed.')
+            console.log('Back button pressed')
+        })
+    }
+})
 import * as Components from "./ui-components"
 
 customElements.define("chat-message", Components.ChatMessage)
@@ -35,7 +42,7 @@ const Gen = (function* () {
     }
 })()
 const messages = new Array(15).fill().map(() => ({
-    textContent: "Hello",
+    textContent: "Hello world lorem ipsum dolor sit amet er tempor incididunt ut labore",
     date: new Date(),
     seen: false,
     sentbyme: Gen.next().value
