@@ -404,7 +404,7 @@ class ChatWindow extends HTMLElement {
         #wrapper {
             padding: calc(5px + 3rem) 0;
             width: 100%;
-            height: calc(100% - calc(10px + 6rem));
+            max-height: calc(100% - calc(10px + 6rem));
             overflow: auto;
         }
         /* Custom scrollbar track */
@@ -579,6 +579,32 @@ class ChatMessage extends HTMLElement {
 class ChatInput extends HTMLElement {
     constructor() {
         super()
+        const {shadow, wrapper, style} = initializeShadow(this)
+        wrapper.appendChild(document.createElement("input"))
+        const parent = this.parentElement
+        parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${this.getAttribute("height")}))`
+
+        style.innerHTML = `
+            #wrapper {
+                position: fixed;
+                background-color: red;
+                width: 100%;
+                bottom: 0;
+            }
+        `
+    }
+    static get observedAttributes() {
+        return ['height']
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {
+            case 'height': {
+                const parent = this.parentElement
+                const wrapper = this.shadowRoot.querySelector('#wrapper')
+                wrapper.style.height = newValue
+                parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${newValue}))`
+            }
+        }
     }
 }
 
