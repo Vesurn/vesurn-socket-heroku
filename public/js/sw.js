@@ -13,7 +13,6 @@ const ASSETS = [
 const CACHE_NAME = "offline-cache"
 
 self.addEventListener("fetch", event => {
-    console.log("You fetched " + event.request.url)
     event.respondWith(
         fetch(event.request).then(response => {
             if (response) {

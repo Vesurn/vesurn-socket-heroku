@@ -2,8 +2,7 @@
 class NavigationBar extends HTMLElement {
     constructor() {
         super()
-        const shadow = this.attachShadow({mode: "open"})
-        const wrapper = this.appendChild(document.createElement('div'))
+        const {shadow, wrapper, style} = initializeShadow(this)
         wrapper.id = 'wrapper'
         
         const left = wrapper.appendChild(document.createElement('div'))
@@ -14,7 +13,7 @@ class NavigationBar extends HTMLElement {
         const slotRight = right.appendChild(document.createElement('slot'))
         slotRight.name = "right"
         
-        const style = document.createElement('style')
+        wrapper.style['z-index'] = this.getAttribute('z-index')
         style.innerHTML = `
         #wrapper{
             position: fixed;
@@ -38,6 +37,19 @@ class NavigationBar extends HTMLElement {
             wrapper.style['background-color'] = "rgba(255, 255, 255, 0.95)"
         } else {
             wrapper.style['background-color'] = "rgba(255, 255, 255, 1)"
+        }
+    }
+
+    static get observedAttributes() {
+        return ['z-index']
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {
+            case "z-index": {
+                const wrapper = this.shadowRoot.querySelector("#wrapper")
+                wrapper.style['z-index'] = newValue
+            }
         }
     }
 }
@@ -191,12 +203,10 @@ class BurgerMenu extends HTMLElement {
 class MenuPanel extends HTMLElement {
     constructor() {
         super()
-        const shadow = this.attachShadow({mode: "open"})
-        const wrapper = shadow.appendChild(document.createElement('div'))
+        const {shadow, wrapper, style} = initializeShadow(this)
         const hamburgerMenu = this.parentElement
         const panel = wrapper.appendChild(document.createElement('div'))
         const slot = panel.appendChild(document.createElement('slot'))
-        const style = shadow.appendChild(document.createElement('style'))
         //Append custom scrollbar style
         shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
         wrapper.id = 'wrapper'
@@ -289,9 +299,7 @@ class PanelButton extends HTMLElement {
      */
     constructor() {
         super()
-        const shadow = this.attachShadow({mode: "open"})
-        const style = shadow.appendChild(document.createElement('style'))
-        const wrapper = shadow.appendChild(document.createElement('div'))
+        const {shadow, wrapper, style} = initializeShadow(this)
         const button = wrapper.appendChild(document.createElement("button"))
         const header = button.appendChild(document.createElement("h1"))
         const text = button.appendChild(document.createElement("p"))
@@ -384,9 +392,7 @@ class PanelButton extends HTMLElement {
 class ChatWindow extends HTMLElement {
     constructor() {
         super()
-        const shadow = this.attachShadow({mode: "open"})
-        const style = shadow.appendChild(document.createElement('style'))
-        const wrapper = shadow.appendChild(document.createElement('div'))
+        const {shadow, wrapper, style} = initializeShadow(this)
         const slot = wrapper.appendChild(document.createElement('slot'))
 
         //Append custom scrollbar style
@@ -436,9 +442,7 @@ class ChatMessage extends HTMLElement {
     /** - Exposed attributes: sentbyme: boolean */
     constructor() {
         super()
-        const shadow = this.attachShadow({mode: "open"})
-        const style = shadow.appendChild(document.createElement('style'))
-        const wrapper = shadow.appendChild(document.createElement('div'))
+        const {shadow, wrapper, style} = initializeShadow(this)
         const message = wrapper.appendChild(document.createElement('div'))
         const extraInfo = wrapper.appendChild(document.createElement("div"))
         wrapper.id = "wrapper"
@@ -572,4 +576,22 @@ class ChatMessage extends HTMLElement {
     }
 }
 
-export { NavigationBar, BurgerMenu, MenuPanel, PanelButton, ChatWindow, ChatMessage }
+class ChatInput extends HTMLElement {
+    constructor() {
+        super()
+    }
+}
+
+function initializeShadow(element) {
+    const shadow = element.attachShadow({mode: "open"})
+    const wrapper = shadow.appendChild(document.createElement('div'))
+    const style = shadow.appendChild(document.createElement('style'))
+    wrapper.id = "wrapper"
+    return {
+        shadow: shadow,
+        wrapper: wrapper,
+        style: style
+    }
+}
+
+export { NavigationBar, BurgerMenu, MenuPanel, PanelButton, ChatWindow, ChatMessage, ChatInput }

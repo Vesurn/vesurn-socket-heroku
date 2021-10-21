@@ -22,6 +22,7 @@ customElements.define("panel-button", Components.PanelButton)
 customElements.define("menu-panel", Components.MenuPanel)
 customElements.define("burger-menu", Components.BurgerMenu)
 customElements.define("navigation-bar", Components.NavigationBar)
+customElements.define("chat-input", Components.ChatInput)
 
 
 
