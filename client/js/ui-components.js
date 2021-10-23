@@ -581,47 +581,98 @@ class ChatInput extends HTMLElement {
         super()
         const {shadow, wrapper, style} = initializeShadow(this)
         const button = wrapper.appendChild(document.createElement('button'))
-        button.textContent = "Button"
+        button.textContent = "B"
         const inputWrapper = wrapper.appendChild(document.createElement('div'))
         inputWrapper.id = "inputDiv"
-        const input = inputWrapper.appendChild(document.createElement("textarea"))
+        const textarea = inputWrapper.appendChild(document.createElement("textarea"))
         const sendButton = inputWrapper.appendChild(document.createElement('button'))
-        sendButton.textContent = "Send"
+        sendButton.textContent = "S"
 
-        new ResizeObserver((entries) => {
-            const parent = this.parentElement
-            const wrapperHeight = entries[0].contentBoxSize[0].blockSize
-            parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${wrapperHeight + "px"}))`
-            
-        }).observe(wrapper)
+         //Append custom scrollbar style
+         shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
+
         style.innerHTML = `
             #wrapper {
                 position: fixed;
                 display: flex;
-                background-color: red;
+                background-color: rgba(255, 255, 255, 0.95);
                 width: 100%;
                 bottom: 0;
-                align-items: center;
+                /* height: 3rem; */
+                align-items: flex-end;
                 justify-content: space-around;
+            }
+            #wrapper > button {
+                margin: 5px;
+                height: 36px;
+                width: 36px;
+                border-radius: 50%;
+                border: none;
+                background: transparent;
             }
             #inputDiv {
                 display:flex;
+                align-items: flex-end;
                 border-radius: 20px;
-                margin: 10px;
-                background-color: gray;
+                margin: 5px;
+                background-color: lightgray;
                 flex-grow: 1;
                 flex-wrap: nowrap;
             }
             #inputDiv > textarea {
                 flex-grow: 1;
-                overflow: visible;
-                height: 50%;
-                margin: 10px
+                overflow: auto;
+                resize:none;
+                height: 1.25rem;
+                max-height: 6rem;
+                min-width: 1rem;
+                margin: 5px 5px 5px 10px;
+                border: none;
+                background: transparent;
+            }
+            #inputDiv > textarea::placeholder {
+                color: gray;
+            }
+            #inputDiv > textarea:focus {
+                outline: none !important;
+            }
+            #inputDiv > textarea::-webkit-scrollbar-thumb {
+                border: 2px solid lightgray;
+                border-top: transparent;
+                border-bottom: transparent;
+                background: #888;
+                border-radius: 10px;
             }
             #inputDiv > button {
-                margin: 10px;
+                height: 36px;
+                width: 36px;
+                border-radius: 50%;
+                border: none;
+                background: transparent;
+            }
+            #inputDiv > button:hover {
+                background: gray;
+            }
+            #wrapper > button:hover {
+                background: gray;
             }
         `
+        new ResizeObserver((entries) => {
+            const parentShadowWrapper = this.parentElement.shadowRoot.querySelector("#wrapper")
+            const contentBoxSize = Array.isArray(entries[0].contentBoxSize) ? entries[0].contentBoxSize[0] : entries[0].contentBoxSize
+            const wrapperHeight = contentBoxSize.blockSize
+
+            /* Decrease the size of the chat-window so the chat-input doesn't overlap messages */
+            parentShadowWrapper.style['height'] = `calc(100% - calc(10px + calc(3rem + ${wrapperHeight + "px"}))`
+
+            parentShadowWrapper.scrollTo(0, parentShadowWrapper.scrollHeight)
+            
+        }).observe(wrapper)
+        textarea.placeholder = "Text message"
+        textarea.addEventListener("input", (e) => {
+            textarea.style.height = 1 + "rem"
+            textarea.style.height = textarea.scrollHeight + "px"
+        })
     }
 }
 
