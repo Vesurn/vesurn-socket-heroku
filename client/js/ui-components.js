@@ -636,6 +636,8 @@ class ChatInput extends HTMLElement {
                 margin: 5px 5px 5px 10px;
                 border: none;
                 background: transparent;
+                font-family: inherit;
+                font-size: inherit;
             }
             #inputDiv > textarea::placeholder {
                 color: gray;
