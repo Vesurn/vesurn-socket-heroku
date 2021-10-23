@@ -454,7 +454,6 @@ class ChatMessage extends HTMLElement {
                 width: calc(100% - 10px);
                 height: fit-content;
                 margin: 5px 0;
-                font-size: 1.3rem;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
@@ -467,7 +466,7 @@ class ChatMessage extends HTMLElement {
             #extraInfo {
                 display: none;
                 flex-basis: 100%;
-                font-size: 1rem;
+                font-size: 0.8rem;
                 color: gray;
             }
             @media screen and (min-width: 300px) {
@@ -581,13 +580,18 @@ class ChatInput extends HTMLElement {
         super()
         const {shadow, wrapper, style} = initializeShadow(this)
         const button = wrapper.appendChild(document.createElement('button'))
-        button.textContent = "B"
+        const img = button.appendChild(document.createElement('img'))
+        img.src = "/images/extraInputs.svg"
+        img.width = 25
+        img.height = 25
         const inputWrapper = wrapper.appendChild(document.createElement('div'))
         inputWrapper.id = "inputDiv"
         const textarea = inputWrapper.appendChild(document.createElement("textarea"))
         const sendButton = inputWrapper.appendChild(document.createElement('button'))
-        sendButton.textContent = "S"
-
+        const img2 = sendButton.appendChild(document.createElement('img'))
+        img2.src = "/images/sendButton.svg"
+        img2.width = 25
+        img2.height= 25
          //Append custom scrollbar style
          shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
 
@@ -603,12 +607,15 @@ class ChatInput extends HTMLElement {
                 justify-content: space-around;
             }
             #wrapper > button {
+                display: flex;
                 margin: 5px;
                 height: 36px;
                 width: 36px;
                 border-radius: 50%;
                 border: none;
                 background: transparent;
+                justify-content: center;
+                align-items: center;
             }
             #inputDiv {
                 display:flex;
@@ -625,7 +632,7 @@ class ChatInput extends HTMLElement {
                 resize:none;
                 height: 1.25rem;
                 max-height: 6rem;
-                min-width: 1rem;
+                width: 2rem;
                 margin: 5px 5px 5px 10px;
                 border: none;
                 background: transparent;
@@ -644,11 +651,15 @@ class ChatInput extends HTMLElement {
                 border-radius: 10px;
             }
             #inputDiv > button {
+                display:flex;
                 height: 36px;
                 width: 36px;
                 border-radius: 50%;
                 border: none;
                 background: transparent;
+                align-items: center;
+                justify-content: center;
+                padding-left: 10px;
             }
             #inputDiv > button:hover {
                 background: gray;
