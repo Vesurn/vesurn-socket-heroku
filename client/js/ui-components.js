@@ -580,31 +580,48 @@ class ChatInput extends HTMLElement {
     constructor() {
         super()
         const {shadow, wrapper, style} = initializeShadow(this)
-        wrapper.appendChild(document.createElement("input"))
-        const parent = this.parentElement
-        parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${this.getAttribute("height")}))`
+        const button = wrapper.appendChild(document.createElement('button'))
+        button.textContent = "Button"
+        const inputWrapper = wrapper.appendChild(document.createElement('div'))
+        inputWrapper.id = "inputDiv"
+        const input = inputWrapper.appendChild(document.createElement("textarea"))
+        const sendButton = inputWrapper.appendChild(document.createElement('button'))
+        sendButton.textContent = "Send"
 
+        new ResizeObserver((entries) => {
+            const parent = this.parentElement
+            const wrapperHeight = entries[0].contentBoxSize[0].blockSize
+            parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${wrapperHeight + "px"}))`
+            
+        }).observe(wrapper)
         style.innerHTML = `
             #wrapper {
                 position: fixed;
+                display: flex;
                 background-color: red;
                 width: 100%;
                 bottom: 0;
+                align-items: center;
+                justify-content: space-around;
+            }
+            #inputDiv {
+                display:flex;
+                border-radius: 20px;
+                margin: 10px;
+                background-color: gray;
+                flex-grow: 1;
+                flex-wrap: nowrap;
+            }
+            #inputDiv > textarea {
+                flex-grow: 1;
+                overflow: visible;
+                height: 50%;
+                margin: 10px
+            }
+            #inputDiv > button {
+                margin: 10px;
             }
         `
-    }
-    static get observedAttributes() {
-        return ['height']
-    }
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case 'height': {
-                const parent = this.parentElement
-                const wrapper = this.shadowRoot.querySelector('#wrapper')
-                wrapper.style.height = newValue
-                parent.shadowRoot.querySelector("#wrapper").style['height'] = `calc(100% - calc(10px + calc(3rem + ${newValue}))`
-            }
-        }
     }
 }
 
