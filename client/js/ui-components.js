@@ -406,6 +406,7 @@ class ChatWindow extends HTMLElement {
             width: 100%;
             max-height: calc(100% - calc(10px + 6rem));
             overflow: auto;
+            overflow-wrap: break-word;
         }
         /* Custom scrollbar track */
         .scrollbar::after {
