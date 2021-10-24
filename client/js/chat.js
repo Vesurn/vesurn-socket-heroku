@@ -48,11 +48,11 @@ chatInput.addEventListener("sendMessage", (e) => {
     const message = {
         textContent: e.detail.message,
         date: new Date(),
-        seen: false,
         sentbyme: true
     }
     socket.emit("chat message", message)
     chatWindow.addMessage(message)
+    chatWindow.messages.forEach(message => message.setAttribute("seen", true))
 })
 socket.on("chat message", message => {
     chatWindow.addMessage(message)

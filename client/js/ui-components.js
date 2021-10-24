@@ -439,9 +439,10 @@ class ChatWindow extends HTMLElement {
     #messages = []
     addMessage(message) {
         const wrapper = this.shadowRoot.querySelector("#wrapper")
-        this.appendChild(document.createElement("chat-message").render(message))
+        const chatMessage = document.createElement("chat-message").render(message)
+        this.appendChild(chatMessage)
         wrapper.scrollTo(0, wrapper.scrollHeight)
-        this.#messages.push(message)
+        this.#messages.push(chatMessage)
     }
     get messages() {
         return this.#messages
@@ -549,11 +550,13 @@ class ChatMessage extends HTMLElement {
         })
     }
     selected = true
-
-    render(options = {textContent: "Empty", date: new Date(), seen: false, sentbyme: true}) {
-        if (!"date" in options) {}options.date = new Date()
+    #message
+    render(options = {textContent: "Empty", date: new Date(), sentbyme: true}) {
+        if (!"date" in options) options.date = new Date()
+        options.date = new Date(options.date)
         if (!"textContent" in options) throw new Error("No textContent provided")
         if (!"sentbyme" in options) options.sentbyme = true
+
         const wrapper = this.shadowRoot.querySelector("#wrapper")
         const message = this.shadowRoot.querySelector("#message")
         const extraInfo = wrapper.querySelector("#extraInfo")
@@ -561,13 +564,17 @@ class ChatMessage extends HTMLElement {
         const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`
 
         this.setAttribute("sentbyme", options.sentbyme ? "true" : "false")
-        extraInfo.textContent = dateStr + `${options.seen ? " - Seen" : ""}`
+        extraInfo.textContent = dateStr
         message.textContent = options.textContent
+        this.#message = options
         return this
+    }
+    get message() {
+        return this.#message
     }
 
     static get observedAttributes() {
-        return ['sentbyme']
+        return ['sentbyme', ]
     }
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
@@ -584,6 +591,7 @@ class ChatMessage extends HTMLElement {
                     message.style['background-color'] = "hsl(0, 0%, 83%)"
                     extraInfo.style['text-align'] = 'left'
                 }
+                break
             }
         }
     }
@@ -629,7 +637,7 @@ class ChatInput extends HTMLElement {
                 border-radius: 50%;
                 border: none;
                 background: transparent;
-                justify-content: center;
+                justify-content: flex-end;
                 align-items: center;
             }
             #inputForm {
