@@ -44,6 +44,10 @@ app.use('/chat', chatRoute)
 /* Socket.io  */
 function onConnection(socket) {
     console.log("Connected " + socket.id)
+    socket.on("chat message", (message) => {
+        message.sentbyme = !message.sentbyme
+        socket.broadcast.emit("chat message", message)
+    })
     socket.on("disconnect", (reason) => {
         console.log(`Disconnected ${socket.id} ${reason}`)
     })

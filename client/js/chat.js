@@ -1,6 +1,4 @@
-const username = localStorage.getItem('username');
-console.log(username);
-//const socket = io()
+const USERNAME = localStorage.getItem('username');
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -26,7 +24,6 @@ customElements.define("chat-input", Components.ChatInput)
 
 
 
-/* TODO: separate custom elements to a module */
 const chatWindow = document.querySelector("chat-window")
 const Gen = (function* () {
     while(true) {
@@ -41,19 +38,22 @@ const messages = new Array(15).fill().map(() => ({
     sentbyme: Gen.next().value
 }))
 
-messages.forEach(message => {
-    chatWindow.appendChild(document.createElement("chat-message").render(message))
-})
+chatWindow.setMessages(messages)
 
-const navbar = document.querySelector("navigation-bar")
-const div = document.createElement("div")
-navbar.appendChild(div)
-div.slot = "right"
-setInterval(() => {
-    div.innerHTML = `${window.innerWidth}x${window.innerHeight}`
-}, 100)
-
+/* Socket.io */
+const socket = io()
 const chatInput = document.querySelector("chat-input")
+
 chatInput.addEventListener("sendMessage", (e) => {
-    console.log(e.detail)
+    const message = {
+        textContent: e.detail.message,
+        date: new Date(),
+        seen: false,
+        sentbyme: true
+    }
+    socket.emit("chat message", message)
+    chatWindow.addMessage(message)
+})
+socket.on("chat message", message => {
+    chatWindow.addMessage(message)
 })

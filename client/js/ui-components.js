@@ -436,6 +436,20 @@ class ChatWindow extends HTMLElement {
             }
         })
     }
+    #messages = []
+    addMessage(message) {
+        const wrapper = this.shadowRoot.querySelector("#wrapper")
+        this.appendChild(document.createElement("chat-message").render(message))
+        wrapper.scrollTo(0, wrapper.scrollHeight)
+        this.#messages.push(message)
+    }
+    get messages() {
+        return this.#messages
+    }
+    setMessages(messages) {
+        this.#messages = []
+        messages.forEach(message => this.addMessage(message))
+    }
 }
 
 class ChatMessage extends HTMLElement {
@@ -544,7 +558,7 @@ class ChatMessage extends HTMLElement {
         const message = this.shadowRoot.querySelector("#message")
         const extraInfo = wrapper.querySelector("#extraInfo")
         const { date } = options
-        const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes()}`
+        const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`
 
         this.setAttribute("sentbyme", options.sentbyme ? "true" : "false")
         extraInfo.textContent = dateStr + `${options.seen ? " - Seen" : ""}`
@@ -631,10 +645,10 @@ class ChatInput extends HTMLElement {
                 flex-grow: 1;
                 overflow: auto;
                 resize:none;
-                height: 1.5rem;
+                height: 25px;
                 max-height: 6rem;
+                margin: 1px 10px;
                 width: 2rem;
-                margin: 7px 5px 3px 10px;
                 border: none;
                 background: transparent;
                 font-family: inherit;
@@ -664,7 +678,7 @@ class ChatInput extends HTMLElement {
                 justify-content: center;
                 padding-left: 10px;
             }
-            #inputDiv > button:hover {
+            #inputForm > button:hover {
                 background: gray;
             }
             #wrapper > button:hover {
@@ -684,8 +698,8 @@ class ChatInput extends HTMLElement {
         }).observe(wrapper)
         textarea.placeholder = "Text message"
         function matchScrollHeight() {
-            textarea.style.height = 1 + "rem"
-            textarea.style.height = textarea.scrollHeight + "px"
+            textarea.style.height = 25 + "px"
+            textarea.style.height = (textarea.scrollHeight <= 29 ? 25 : textarea.scrollHeight) + "px"
         }
         textarea.addEventListener("input", matchScrollHeight)
         textarea.addEventListener("keypress", (e) => {
@@ -707,15 +721,17 @@ class ChatInput extends HTMLElement {
         })
         inputWrapper.addEventListener("submit", (e) => {
             e.preventDefault()
-            this.dispatchEvent(new CustomEvent('sendMessage', {
-                bubbles: true,
-                cancelable: true,
-                composed: true,
-                detail: {
-                    message: textarea.value,
-                }
-            }))
-            textarea.value = ""
+            if (textarea.value.replace(/\s/g, '').length) {
+                this.dispatchEvent(new CustomEvent('sendMessage', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true,
+                    detail: {
+                        message: textarea.value,
+                    }
+                }))
+                textarea.value = ""
+            }
         })
     }
 }
