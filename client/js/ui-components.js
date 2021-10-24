@@ -717,10 +717,7 @@ class ChatInput extends HTMLElement {
             }
             if (e.key === "Enter" && textarea.value.replace(/\s/g, '').length) {
                 e.preventDefault()
-                console.log(e)
                 inputWrapper.requestSubmit()
-                matchScrollHeight()
-                textarea.scrollTo(0, textarea.scrollHeight)
             }
             if (e.key === "\n") {
                 textarea.value += e.key
@@ -740,6 +737,8 @@ class ChatInput extends HTMLElement {
                     }
                 }))
                 textarea.value = ""
+                matchScrollHeight()
+                textarea.scrollTo(0, textarea.scrollHeight)
             }
         })
     }
