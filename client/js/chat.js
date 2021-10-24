@@ -52,3 +52,8 @@ div.slot = "right"
 setInterval(() => {
     div.innerHTML = `${window.innerWidth}x${window.innerHeight}`
 }, 100)
+
+const chatInput = document.querySelector("chat-input")
+chatInput.addEventListener("sendMessage", (e) => {
+    console.log(e.detail)
+})

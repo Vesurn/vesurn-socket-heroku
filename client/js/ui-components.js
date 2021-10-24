@@ -584,16 +584,17 @@ class ChatInput extends HTMLElement {
         img.src = "/images/extraInputs.svg"
         img.width = 25
         img.height = 25
-        const inputWrapper = wrapper.appendChild(document.createElement('div'))
-        inputWrapper.id = "inputDiv"
+        const inputWrapper = wrapper.appendChild(document.createElement('form'))
+        inputWrapper.id = "inputForm"
         const textarea = inputWrapper.appendChild(document.createElement("textarea"))
         const sendButton = inputWrapper.appendChild(document.createElement('button'))
+        sendButton.type = 'submit'
         const img2 = sendButton.appendChild(document.createElement('img'))
         img2.src = "/images/sendButton.svg"
         img2.width = 25
         img2.height= 25
-         //Append custom scrollbar style
-         shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
+        //Append custom scrollbar style
+        shadow.appendChild(document.querySelector("#scrollbar-template").content.cloneNode(true))
 
         style.innerHTML = `
             #wrapper {
@@ -608,54 +609,54 @@ class ChatInput extends HTMLElement {
             }
             #wrapper > button {
                 display: flex;
-                margin: 5px;
-                height: 36px;
-                width: 36px;
+                margin: 10px;
+                height: 37.97px;
+                width: 37.97px;
                 border-radius: 50%;
                 border: none;
                 background: transparent;
                 justify-content: center;
                 align-items: center;
             }
-            #inputDiv {
+            #inputForm {
                 display:flex;
                 align-items: flex-end;
                 border-radius: 20px;
-                margin: 5px;
+                margin: 10px;
                 background-color: lightgray;
                 flex-grow: 1;
                 flex-wrap: nowrap;
             }
-            #inputDiv > textarea {
+            #inputForm > textarea {
                 flex-grow: 1;
                 overflow: auto;
                 resize:none;
-                height: 1.25rem;
+                height: 1.5rem;
                 max-height: 6rem;
                 width: 2rem;
-                margin: 5px 5px 5px 10px;
+                margin: 7px 5px 3px 10px;
                 border: none;
                 background: transparent;
                 font-family: inherit;
                 font-size: inherit;
             }
-            #inputDiv > textarea::placeholder {
+            #inputForm > textarea::placeholder {
                 color: gray;
             }
-            #inputDiv > textarea:focus {
+            #inputForm > textarea:focus {
                 outline: none !important;
             }
-            #inputDiv > textarea::-webkit-scrollbar-thumb {
+            #inputForm > textarea::-webkit-scrollbar-thumb {
                 border: 2px solid lightgray;
                 border-top: transparent;
                 border-bottom: transparent;
                 background: #888;
                 border-radius: 10px;
             }
-            #inputDiv > button {
+            #inputForm > button {
                 display:flex;
-                height: 36px;
-                width: 36px;
+                height: 37.97px;
+                width: 37.97px;
                 border-radius: 50%;
                 border: none;
                 background: transparent;
@@ -682,9 +683,39 @@ class ChatInput extends HTMLElement {
             
         }).observe(wrapper)
         textarea.placeholder = "Text message"
-        textarea.addEventListener("input", (e) => {
+        function matchScrollHeight() {
             textarea.style.height = 1 + "rem"
             textarea.style.height = textarea.scrollHeight + "px"
+        }
+        textarea.addEventListener("input", matchScrollHeight)
+        textarea.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault()
+            }
+            if (e.key === "Enter" && textarea.value.replace(/\s/g, '').length) {
+                e.preventDefault()
+                console.log(e)
+                inputWrapper.requestSubmit()
+                matchScrollHeight()
+                textarea.scrollTo(0, textarea.scrollHeight)
+            }
+            if (e.key === "\n") {
+                textarea.value += e.key
+                matchScrollHeight()
+                textarea.scrollTo(0, textarea.scrollHeight)
+            }
+        })
+        inputWrapper.addEventListener("submit", (e) => {
+            e.preventDefault()
+            this.dispatchEvent(new CustomEvent('sendMessage', {
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+                detail: {
+                    message: textarea.value,
+                }
+            }))
+            textarea.value = ""
         })
     }
 }
