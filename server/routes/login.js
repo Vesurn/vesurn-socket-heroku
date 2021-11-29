@@ -6,7 +6,6 @@ router.get('/', (req, res) => {
     res.redirect('/chat')
 })
 router.post('/', (req, res) => {
-    console.log(req.body)
     res.json({username: req.body.username, id: 1})
 })
 module.exports = router

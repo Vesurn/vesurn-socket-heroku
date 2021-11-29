@@ -1,4 +1,4 @@
-const USERNAME = localStorage.getItem('username');
+const USER = JSON.parse(localStorage.getItem('user'))
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -12,6 +12,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+import { io } from "socket.io-client";
 import * as Components from "./ui-components"
 
 customElements.define("chat-message", Components.ChatMessage)
@@ -22,33 +23,29 @@ customElements.define("burger-menu", Components.BurgerMenu)
 customElements.define("navigation-bar", Components.NavigationBar)
 customElements.define("chat-input", Components.ChatInput)
 
-
-
-const chatWindow = document.querySelector("chat-window")
-const Gen = (function* () {
-    while(true) {
-        yield true
-        yield false
-    }
-})()
-const messages = new Array(15).fill().map(() => ({
-    textContent: "Hello world lorem ipsum dolor sit amet er tempor incididunt ut labore",
-    date: new Date(),
-    seen: false,
-    sentbyme: Gen.next().value
-}))
-
-chatWindow.setMessages(messages)
-
 /* Socket.io */
 const socket = io()
 const chatInput = document.querySelector("chat-input")
+const chatWindow = document.querySelector("chat-window")
+const menuPanel = document.querySelector("menu-panel")
+
+socket.on("connected", (online) => {
+    Object.entries(online).forEach(([socketId, user]) => {
+        addPanel(user.username, "Online", true)
+    })
+    socket.emit("user joined", USER)
+})
+socket.on("user joined", user => {
+    addPanel(user.username, "User Joined", false)
+})
+
 
 chatInput.addEventListener("sendMessage", (e) => {
     const message = {
         textContent: e.detail.message,
         date: new Date(),
-        sentbyme: true
+        sentbyme: true,
+        author: USER
     }
     socket.emit("chat message", message)
     chatWindow.addMessage(message)
@@ -57,3 +54,17 @@ chatInput.addEventListener("sendMessage", (e) => {
 socket.on("chat message", message => {
     chatWindow.addMessage(message)
 })
+
+socket.on("user disconnected", user => {
+    Array.from(menuPanel.children).forEach(child => {
+        if (child.getAttribute("Header") === user.username) child.remove()
+    })
+})
+
+function addPanel(header, text, seen = false) {
+    const panelButton = document.createElement("panel-button")
+    panelButton.setAttribute("seen", seen)
+    panelButton.setAttribute("header", header)
+    panelButton.setAttribute("text", text)
+    menuPanel.appendChild(panelButton)
+}

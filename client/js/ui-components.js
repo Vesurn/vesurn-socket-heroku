@@ -303,12 +303,6 @@ class PanelButton extends HTMLElement {
         const button = wrapper.appendChild(document.createElement("button"))
         const header = button.appendChild(document.createElement("h1"))
         const text = button.appendChild(document.createElement("p"))
-        let HamburgerMenu
-        if (this.parentElement.parentElement.localName === "burger-menu") {
-            HamburgerMenu = this.parentElement.parentElement
-        } else {
-            throw new Error("panel-button must be a child of menu-panel")
-        }
         
         wrapper.id = 'wrapper'
 
@@ -338,13 +332,23 @@ class PanelButton extends HTMLElement {
             button:hover {
                 background-color: hsla(0, 0%, 60%, 0.3);
             }
+            .seen-false {
+                background-color: rgba(173, 216, 230, 0.5);
+                border-right: 6px solid blue;
+            }
 
         `
-
-        
+    }
+    connectedCallback() {
+        let HamburgerMenu
+        if (this.parentElement.parentElement.localName === "burger-menu") {
+            HamburgerMenu = this.parentElement.parentElement
+        } else {
+            throw new Error("panel-button must be a child of menu-panel")
+        }
         this.addEventListener('click', (e) => {
             HamburgerMenu.close()
-            this.setAttribute("seen", false)
+            this.setAttribute("seen", true)
         })
     }
 
@@ -357,12 +361,10 @@ class PanelButton extends HTMLElement {
         const header = button.querySelector("h1")
         const text = button.querySelector("p")
         function onSeenChange() {
-            if (newValue === "true") {
-                button.style['border-right'] = "none"
-                button.style['background-color'] = "rgba(255, 255, 255, 0)"
-            } else if (newValue === "false") {
-                button.style['border-right'] = "6px solid blue"
-                button.style['background-color'] = "rgba(173, 216, 230, 0.5)"
+            if (newValue === "false") {
+                button.classList.add("seen-false")
+            } else if (newValue === "true") {
+                button.classList.remove("seen-false")
             }
         }
 
@@ -406,7 +408,6 @@ class ChatWindow extends HTMLElement {
             width: 100%;
             max-height: calc(100% - calc(10px + 6rem));
             overflow: auto;
-            overflow-wrap: break-word;
         }
         /* Custom scrollbar track */
         .scrollbar::after {
@@ -459,15 +460,17 @@ class ChatMessage extends HTMLElement {
     constructor() {
         super()
         const {shadow, wrapper, style} = initializeShadow(this)
+        const author = wrapper.appendChild(document.createElement('div'))
         const message = wrapper.appendChild(document.createElement('div'))
         const extraInfo = wrapper.appendChild(document.createElement("div"))
         wrapper.id = "wrapper"
+        author.id = "author"
         message.id = "message"
         extraInfo.id = "extraInfo"
         style.innerHTML = `
             #wrapper {
                 padding: 0 5px;
-                width: calc(100% - 10px);
+                max-width: calc(100% - 10px);
                 height: fit-content;
                 margin: 5px 0;
                 display: flex;
@@ -478,12 +481,19 @@ class ChatMessage extends HTMLElement {
             #message {
                 padding: 2px 7px;
                 border-radius: 15px;
+                max-width: calc(100% - 10px);
+                overflow-wrap: break-word;
             }
             #extraInfo {
                 display: none;
                 flex-basis: 100%;
                 font-size: 0.8rem;
                 color: gray;
+            }
+            #author {
+                display: none;
+                color: gray;
+                font-size: 0.8rem;
             }
             @media screen and (min-width: 300px) {
                 #message {
@@ -552,7 +562,8 @@ class ChatMessage extends HTMLElement {
     }
     selected = true
     #message
-    render(options = {textContent: "Empty", date: new Date(), sentbyme: true}) {
+    render(options = {textContent: "Empty", date: new Date(), sentbyme: true, author}) {
+        if (!options.author) throw new Error("A message author is required")
         if (!"date" in options) options.date = new Date()
         options.date = new Date(options.date)
         if (!"textContent" in options) throw new Error("No textContent provided")
@@ -561,11 +572,16 @@ class ChatMessage extends HTMLElement {
         const wrapper = this.shadowRoot.querySelector("#wrapper")
         const message = this.shadowRoot.querySelector("#message")
         const extraInfo = wrapper.querySelector("#extraInfo")
+        const author = wrapper.querySelector("#author")
         const { date } = options
         const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} - ${date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`
 
         this.setAttribute("sentbyme", options.sentbyme ? "true" : "false")
         extraInfo.textContent = dateStr
+        if (!options.sentbyme) {
+            author.style.display = "block"
+            author.textContent = options.author.username + ":"
+        }
         message.textContent = options.textContent
         this.#message = options
         return this
