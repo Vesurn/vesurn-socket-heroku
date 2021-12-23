@@ -1,3 +1,5 @@
+"use strict"
+
 const USER = JSON.parse(localStorage.getItem('user'))
 
 if ('serviceWorker' in navigator) {
@@ -28,17 +30,31 @@ const socket = io()
 const chatInput = document.querySelector("chat-input")
 const chatWindow = document.querySelector("chat-window")
 const menuPanel = document.querySelector("menu-panel")
+const globalMenu = menuPanel.querySelector("panel-button")
+let ROOM_TO = "GLOBAL"
+
+globalMenu.addEventListener('click', () => {
+    ROOM_TO = "GLOBAL"
+})
 
 socket.on("connected", (online) => {
     Object.entries(online).forEach(([socketId, user]) => {
-        addPanel(user.username, "Online", true)
+        const panel = addPanel(user.username, "Online", true)
+        panel.addEventListener("click", () => {
+            ROOM_TO = socketId
+        })
     })
     socket.emit("user joined", USER)
 })
-socket.on("user joined", user => {
-    addPanel(user.username, "User Joined", false)
+socket.on("user joined", (user, socketId) => {
+    const panel = addPanel(user.username, "User Joined", false)
+    panel.addEventListener("click", () => {
+        ROOM_TO = socketId
+    })
 })
+socket.on("user joined room", (socketId, user) => {
 
+})
 
 chatInput.addEventListener("sendMessage", (e) => {
     const message = {
@@ -47,12 +63,13 @@ chatInput.addEventListener("sendMessage", (e) => {
         sentbyme: true,
         author: USER
     }
-    socket.emit("chat message", message)
+
+    socket.emit("chat message", message, ROOM_TO)
     chatWindow.addMessage(message)
-    chatWindow.messages.forEach(message => message.setAttribute("seen", true))
 })
 socket.on("chat message", message => {
     chatWindow.addMessage(message)
+    chatWindow.messages.forEach(message => message.setAttribute("seen", true))
 })
 
 socket.on("user disconnected", user => {
@@ -67,4 +84,5 @@ function addPanel(header, text, seen = false) {
     panelButton.setAttribute("header", header)
     panelButton.setAttribute("text", text)
     menuPanel.appendChild(panelButton)
+    return panelButton
 }

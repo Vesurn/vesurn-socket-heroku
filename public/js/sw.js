@@ -5,7 +5,7 @@ const ASSETS = [
     "/js/chat.bundle.js",
     "/js/index.bundle.js",
     "/socket.io/socket.io.js", // Optional while not using webpack for socket.io
-    "/manifest.json",
+    "/manifest.webmanifest",
     "/images/VSRN1920x1920.png",
     "/images/maskable_icon.png",
     "/images/VSRNsquare.jpg"
